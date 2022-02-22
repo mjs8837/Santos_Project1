@@ -30,16 +30,16 @@ const parseBody = (request, response, handler) => {
 };
 
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addUser') {
-    parseBody(request, response, jsonHandler.addUser);
+  if (parsedUrl.pathname === '/addTask') {
+    parseBody(request, response, jsonHandler.addTask);
   }
 };
 
 const handleGet = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/style.css') {
     htmlHandler.getCSS(request, response);
-  } else if (parsedUrl.pathname === '/getUsers') {
-    jsonHandler.getUsers(request, response);
+  } else if (parsedUrl.pathname === '/getTasks') {
+    jsonHandler.getTasks(request, response);
   } else if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
   } else {
@@ -49,7 +49,7 @@ const handleGet = (request, response, parsedUrl) => {
 
 const handleHead = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/getUsers') {
-    jsonHandler.getUsersMeta(request, response);
+    jsonHandler.getTasksMeta(request, response);
   } else {
     jsonHandler.notFoundMeta(request, response);
   }

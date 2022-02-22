@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Our simple HTTP server</title>
+  <title>Project 1</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
@@ -30,7 +30,7 @@
     if (parseResponse) {
       let obj = await response.json();  
       console.log(obj);
-      content.innerHTML += `<p>${JSON.stringify(obj.users) || 'Message: ' + JSON.stringify(obj.message)}</p>`;
+      content.innerHTML += `<p>${JSON.stringify(obj.tasks) || 'Message: ' + JSON.stringify(obj.message)}</p>`;
     }
   };
 
@@ -39,10 +39,10 @@
     const nameAction = nameForm.getAttribute('action');
     const nameMethod = nameForm.getAttribute('method');
       
-    const nameField = nameForm.querySelector('#nameField');
-    const ageField = nameForm.querySelector('#ageField');
+    const taskField = nameForm.querySelector('#taskField');
+    const dueDateField = nameForm.querySelector('#dueDateField');
 
-    const formData = `name=${nameField.value}&age=${ageField.value}`;
+    const formData = `task=${taskField.value}&dueDate=${dueDateField.value}`;
 
     let response = await fetch(nameAction, {
       method: nameMethod,
@@ -57,7 +57,7 @@
   };
 
   const sendGet = async (userForm) => {
-    const url = document.querySelector('#urlField').value;
+    const url = '/getTasks';
     const method = document.querySelector('#methodSelect').value;
 
     let response = await fetch(url, {
@@ -72,23 +72,23 @@
   };
   
   const init = () => {
-    const nameForm = document.querySelector('#nameForm');
-    const userForm = document.querySelector('#userForm');
+    const taskForm = document.querySelector('#taskForm');
+    const getForm = document.querySelector('#getForm');
       
     const addUser = (e) => {
       e.preventDefault();
-      sendPost(nameForm);
+      sendPost(taskForm);
       return false;
     }
 
     const getUser = (e) => {
       e.preventDefault();
-      sendGet(userForm);
+      sendGet(getForm);
       return false;
     }
       
-    nameForm.addEventListener('submit', addUser);
-    userForm.addEventListener('submit', getUser);
+    taskForm.addEventListener('submit', addUser);
+    getForm.addEventListener('submit', getUser);
   };
 
   window.onload = init;
@@ -97,6 +97,25 @@
 </head>
 <body>
   <section id="top">
+    <form id="taskForm" action="/addTask" method="post">
+      <label for="task">Task: </label>
+      <input id="taskField" type="text" task="task" />
+      <label for="dueDate">Due Date: </label>
+      <input id="dueDateField" type="date" dueDate="dueDate" />
+      <input type="submit" value="Add Task" />
+    </form>
+    <form id="getForm" action="/getTasks" method="get">
+      <select id="methodSelect">
+        <option value="get">GET</option>
+        <option value="head">HEAD</option>
+      </select>
+      <input type="submit" value="Get Task" />
+    </form>
+  </section>
+  <section id="content">
+  </section>
+
+  <!--section id="top">
     <h3>POST Status Code Tests</h3>
     <form id="nameForm" action="/addUser" method="post">
       <label for="name">Name: </label>
@@ -118,6 +137,6 @@
     </form>
   </section>
   <section id="content">
-  </section>
+  </section!-->
 </body>
 </html>

@@ -1,4 +1,4 @@
-const users = {};
+const tasks = {};
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
@@ -11,35 +11,35 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-const getUsers = (request, response) => {
+const getTasks = (request, response) => {
   const responseJSON = {
-    users,
+    tasks,
   };
 
   respondJSON(request, response, 200, responseJSON);
 };
 
-const getUsersMeta = (request, response) => respondJSONMeta(request, response, 200);
+const getTasksMeta = (request, response) => respondJSONMeta(request, response, 200);
 
-const addUser = (request, response, body) => {
+const addTask = (request, response, body) => {
   const responseJSON = {
-    message: 'Name and age are both required.',
+    message: 'Task and due date are both required.',
   };
 
-  if (!body.name || !body.age) {
-    responseJSON.id = 'addUserMissingParams';
+  if (!body.task || !body.dueDate) {
+    responseJSON.id = 'addTaskMissingParams';
     return respondJSON(request, response, 400, responseJSON);
   }
 
   let responseCode = 204;
 
-  if (!users[body.name]) {
+  if (!tasks[body.task]) {
     responseCode = 201;
-    users[body.name] = {};
+    tasks[body.task] = {};
   }
 
-  users[body.name].name = body.name;
-  users[body.name].age = body.age;
+  tasks[body.task].task = body.task;
+  tasks[body.task].dueDate = body.dueDate;
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -51,21 +51,19 @@ const addUser = (request, response, body) => {
 
 const notFound = (request, response) => {
   const responseJSON = {
-    message: "The page you are looking for was not found.",
+    message: 'The page you are looking for was not found.',
     id: 'notFound',
   };
 
   return respondJSON(request, response, 404, responseJSON);
 };
 
-const notFoundMeta = (request, response) => {
-  return respondJSONMeta(request, response, 404);
-};
+const notFoundMeta = (request, response) => respondJSONMeta(request, response, 404);
 
 module.exports = {
-  getUsers,
-  getUsersMeta,
-  addUser,
+  getTasks,
+  getTasksMeta,
+  addTask,
   notFound,
   notFoundMeta,
 };
