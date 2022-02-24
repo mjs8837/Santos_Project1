@@ -11,26 +11,26 @@
 
     switch(response.status) {
       case 200:
-        content.innerHTML = `<b>Success</b>`;
+        console.log(response.status + " - Success");
         break;
       case 201: 
-        content.innerHTML = '<b>Created</b>';
+        console.log(response.status + " - Created");
         break;
       case 204:
-        content.innerHTML = '<b>Updated (No Content)</b>';
+        console.log(response.status + " - Updated");
         return;
       case 400:
-        content.innerHTML = `<b>Bad Request</b>`;
+        console.log(response.status + " - Bad Request");
         break;
       default:
-        content.innerHTML = `<b>Not Found</b>`;
-          break;
+        console.log(response.status + " - Not Found");
+        break;
     }
 
     if (parseResponse) {
       let obj = await response.json();  
       console.log(obj);
-      content.innerHTML += `<p>${JSON.stringify(obj.tasks) || 'Message: ' + JSON.stringify(obj.message)}</p>`;
+      content.innerHTML = `<p>${JSON.stringify(obj.name) || 'Message: ' + JSON.stringify(obj.message)}</p>`;
     }
   };
 
@@ -39,10 +39,10 @@
     const nameAction = nameForm.getAttribute('action');
     const nameMethod = nameForm.getAttribute('method');
       
-    const taskField = nameForm.querySelector('#taskField');
-    const dueDateField = nameForm.querySelector('#dueDateField');
+    const nameField = nameForm.querySelector('#nameField').value;
+    const typeField = nameForm.querySelector('#typeField').value;
 
-    const formData = `task=${taskField.value}&dueDate=${dueDateField.value}`;
+    const formData = `name=${nameField}&characterType=${typeField}`;
 
     let response = await fetch(nameAction, {
       method: nameMethod,
@@ -56,8 +56,8 @@
     handleResponse(response, nameMethod === 'post');
   };
 
-  const sendGet = async (userForm) => {
-    const url = '/getTasks';
+  const sendGet = async (characterForm) => {
+    const url = characterForm.getAttribute('action');
     const method = document.querySelector('#methodSelect').value;
 
     let response = await fetch(url, {
@@ -72,23 +72,23 @@
   };
   
   const init = () => {
-    const taskForm = document.querySelector('#taskForm');
-    const getForm = document.querySelector('#getForm');
+    const setCharacterForm = document.querySelector('#setCharacterForm');
+    const getCharacterForm = document.querySelector('#getCharacterForm')
       
-    const addUser = (e) => {
+    const addCharacter = (e) => {
       e.preventDefault();
-      sendPost(taskForm);
+      sendPost(setCharacterForm);
       return false;
     }
 
-    const getUser = (e) => {
+    const getCharacters = (e) => {
       e.preventDefault();
-      sendGet(getForm);
+      sendGet(getCharacterForm);
       return false;
     }
       
-    taskForm.addEventListener('submit', addUser);
-    getForm.addEventListener('submit', getUser);
+    setCharacterForm.addEventListener('submit', addCharacter);
+    getCharacterForm.addEventListener('submit', getCharacters);
   };
 
   window.onload = init;
@@ -97,46 +97,28 @@
 </head>
 <body>
   <section id="top">
-    <form id="taskForm" action="/addTask" method="post">
-      <label for="task">Task: </label>
-      <input id="taskField" type="text" task="task" />
-      <label for="dueDate">Due Date: </label>
-      <input id="dueDateField" type="date" dueDate="dueDate" />
-      <input type="submit" value="Add Task" />
-    </form>
-    <form id="getForm" action="/getTasks" method="get">
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Get Task" />
-    </form>
-  </section>
-  <section id="content">
-  </section>
-
-  <!--section id="top">
-    <h3>POST Status Code Tests</h3>
-    <form id="nameForm" action="/addUser" method="post">
+    <form id="setCharacterForm" action="/addCharacter" method="post">
       <label for="name">Name: </label>
       <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
-      <input type="submit" value="Add User" />
-    </form>
-    <form id="userForm" action="/getUsers" method="get">
-      <select id='urlField'>
-        <option value='/getUsers'>/getUsers</option>
-        <option value='/notReal'>/notReal</option>
+      <label for="characterType">Character Type: </label>
+      <select id="typeField">
+        <option value=""></option>
+        <option value="knight">Knight</option>
+        <option value="warrior">Warrior</option>
+        <option value="thief">Thief</option>
+        <option value="sorcerer">Sorcerer</option>
       </select>
+      <input type="submit" value="Create Character" />
+    </form>
+    <form id="getCharacterForm" action="/getCharacters" method="get">
       <select id="methodSelect">
         <option value="get">GET</option>
         <option value="head">HEAD</option>
       </select>
-      <input type="submit" value="Get User" />
+      <input type="submit" value="Get Characters" />
     </form>
   </section>
   <section id="content">
-  </section!-->
+  </section>
 </body>
 </html>

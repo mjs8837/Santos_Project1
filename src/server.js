@@ -5,6 +5,7 @@ const query = require('querystring');
 
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./JSONResponses.js');
+const mediaHandler = require('./mediaResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -30,26 +31,34 @@ const parseBody = (request, response, handler) => {
 };
 
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addTask') {
-    parseBody(request, response, jsonHandler.addTask);
+  if (parsedUrl.pathname === '/addCharacter') {
+    parseBody(request, response, jsonHandler.addCharacter);
   }
 };
 
 const handleGet = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/style.css') {
     htmlHandler.getCSS(request, response);
-  } else if (parsedUrl.pathname === '/getTasks') {
-    jsonHandler.getTasks(request, response);
+  } else if (parsedUrl.pathname === '/getCharacters') {
+    jsonHandler.getCharacters(request, response);
   } else if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
+  } else if (parsedUrl.pathname === '/warrior.jpg') {
+    mediaHandler.getWarrior(request, response);
+  } else if (parsedUrl.pathname === '/knight.jpg') {
+    mediaHandler.getKnight(request, response);
+  } else if (parsedUrl.pathname === '/thief.jpg') {
+    mediaHandler.getThief(request, response);
+  } else if (parsedUrl.pathname === '/sorcerer.jpg') {
+    mediaHandler.getSorcerer(request, response);
   } else {
     jsonHandler.notFound(request, response);
   }
 };
 
 const handleHead = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/getUsers') {
-    jsonHandler.getTasksMeta(request, response);
+  if (parsedUrl.pathname === '/getCharacters') {
+    jsonHandler.getCharactersMeta(request, response);
   } else {
     jsonHandler.notFoundMeta(request, response);
   }

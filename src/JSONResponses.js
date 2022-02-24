@@ -1,4 +1,4 @@
-const tasks = {};
+const characters = {};
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
@@ -11,35 +11,37 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-const getTasks = (request, response) => {
+const getCharacters = (request, response) => {
   const responseJSON = {
-    tasks,
+    characters,
   };
 
   respondJSON(request, response, 200, responseJSON);
 };
 
-const getTasksMeta = (request, response) => respondJSONMeta(request, response, 200);
+const getCharactersMeta = (request, response) => respondJSONMeta(request, response, 200);
 
-const addTask = (request, response, body) => {
+const addCharacter = (request, response, body) => {
+  console.log(body.name);
+  console.log(body.characterType);
   const responseJSON = {
-    message: 'Task and due date are both required.',
+    message: 'Name and type are both required.',
   };
 
-  if (!body.task || !body.dueDate) {
+  if (!body.name || !body.characterType) {
     responseJSON.id = 'addTaskMissingParams';
     return respondJSON(request, response, 400, responseJSON);
   }
 
   let responseCode = 204;
 
-  if (!tasks[body.task]) {
+  if (!characters[body.name]) {
     responseCode = 201;
-    tasks[body.task] = {};
+    characters[body.name] = {};
   }
 
-  tasks[body.task].task = body.task;
-  tasks[body.task].dueDate = body.dueDate;
+  characters[body.name].name = body.name;
+  characters[body.name].characterType = body.characterType;
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -61,9 +63,9 @@ const notFound = (request, response) => {
 const notFoundMeta = (request, response) => respondJSONMeta(request, response, 404);
 
 module.exports = {
-  getTasks,
-  getTasksMeta,
-  addTask,
+  getCharacters,
+  getCharactersMeta,
+  addCharacter,
   notFound,
   notFoundMeta,
 };
