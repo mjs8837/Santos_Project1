@@ -73,7 +73,8 @@
   
   const init = () => {
     const setCharacterForm = document.querySelector('#setCharacterForm');
-    const getCharacterForm = document.querySelector('#getCharacterForm')
+    const getCharacterForm = document.querySelector('#getCharacterForm');
+    const select = document.querySelector('#typeField');
       
     const addCharacter = (e) => {
       e.preventDefault();
@@ -89,6 +90,21 @@
       
     setCharacterForm.addEventListener('submit', addCharacter);
     getCharacterForm.addEventListener('submit', getCharacters);
+
+    select.addEventListener('change', () => {
+      const content = document.querySelector('#content');
+
+      if (document.querySelector('#characterPic') !== null) {
+        content.removeChild(document.querySelector('#characterPic'));
+      }
+
+      const src = '/' + select.value + '.jpg';
+      const img = document.createElement('img');
+      img.id = 'characterPic';
+      img.src = src;
+      img.alt = 'character type image';
+      content.appendChild(img);
+    });
   };
 
   window.onload = init;
