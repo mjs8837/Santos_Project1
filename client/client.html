@@ -5,6 +5,8 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+  let createdCharacters = [];
+
   const handleResponse = async (response, parseResponse) => {
       
     const content = document.querySelector('#content');
@@ -27,11 +29,11 @@
         break;
     }
 
-    if (parseResponse) {
+     if (parseResponse === 'get') {
       let obj = await response.json();  
       console.log(obj);
-      content.innerHTML = `<p>${JSON.stringify(obj.name) || 'Message: ' + JSON.stringify(obj.message)}</p>`;
-    }
+      //content.innerHTML = `<p>${obj.name}</p>`;
+     }
   };
 
   const sendPost = async (nameForm) => {
@@ -41,6 +43,31 @@
       
     const nameField = nameForm.querySelector('#nameField').value;
     const typeField = nameForm.querySelector('#typeField').value;
+
+    const characterSelect = document.querySelector('#characterSelect');
+    const option = document.createElement("option");
+
+    option.text = nameField; 
+    option.value = nameField;
+    characterSelect.add(option);
+    
+    // console.log(createdCharacters);
+
+    // if (createdCharacters.length === 0) {
+    //   option.text = nameField; 
+    //   option.value = nameField;
+    //   characterSelect.add(option);
+    // } else {
+    //   for (let i = 0; i < createdCharacters.length; i++) {
+    //     if (createdCharacters[i] !== nameField) {
+    //       option.text = nameField; 
+    //       option.value = nameField;
+    //       characterSelect.add(option);
+    //     } 
+    //   }
+    // }
+
+    // createdCharacters.push(nameField);
 
     const formData = `name=${nameField}&characterType=${typeField}`;
 
@@ -58,7 +85,7 @@
 
   const sendGet = async (characterForm) => {
     const url = characterForm.getAttribute('action');
-    const method = document.querySelector('#methodSelect').value;
+    const method = 'get';
 
     let response = await fetch(url, {
       method: method,
@@ -79,6 +106,12 @@
     const addCharacter = (e) => {
       e.preventDefault();
       sendPost(setCharacterForm);
+
+      const img = document.querySelector("#characterPic");
+      if (img != null) {
+        img.remove();
+      }
+
       return false;
     }
 
@@ -127,11 +160,11 @@
       <input type="submit" value="Create Character" />
     </form>
     <form id="getCharacterForm" action="/getCharacters" method="get">
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
+      <label for="characterNames">Created Characters: </label>
+      <select id="characterSelect">
+        
       </select>
-      <input type="submit" value="Get Characters" />
+      <input type="submit" value="Get Selected Character" />
     </form>
   </section>
   <section id="content">

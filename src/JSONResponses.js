@@ -22,8 +22,6 @@ const getCharacters = (request, response) => {
 const getCharactersMeta = (request, response) => respondJSONMeta(request, response, 200);
 
 const addCharacter = (request, response, body) => {
-  console.log(body.name);
-  console.log(body.characterType);
   const responseJSON = {
     message: 'Name and type are both required.',
   };

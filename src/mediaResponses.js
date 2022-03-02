@@ -13,7 +13,7 @@ const errorCheck = (response, err) => {
   };
 
 const responseSetup = (response, start, end, total, chunksize, contentType) => {
-    response.writeHead(206, {
+    response.writeHead(200, {
       'Content-Range': `bytes ${start}-${end}/${total}`,
       'Accept-Ranges': 'bytes',
       'Content-Length': chunksize,
