@@ -3,15 +3,11 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  background-color:rgb(230, 230, 230);
 }
 
 #top {
-  text-align: center;
-  margin: 0 auto;
-}
-
-#top h1 {
-  font-size: 2em;
+  padding-left: 20px;
 }
 
 #content {

@@ -2,6 +2,8 @@ const fs = require('fs'); // pull in the file system module
 
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
+const skeletonCSS = fs.readFileSync(`${__dirname}/../client/skeleton.css`);
+const normalizeCSS = fs.readFileSync(`${__dirname}/../client/normalize.css`);
 
 const getIndex = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -15,7 +17,21 @@ const getCSS = (request, response) => {
   response.end();
 };
 
+const getSkeletonCSS = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/css' });
+  response.write(skeletonCSS);
+  response.end();
+};
+
+const getNormalizedCSS = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/css' });
+  response.write(normalizeCSS);
+  response.end();
+};
+
 module.exports = {
   getIndex,
   getCSS,
+  getSkeletonCSS,
+  getNormalizedCSS,
 };

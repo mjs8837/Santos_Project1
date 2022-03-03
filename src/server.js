@@ -9,6 +9,7 @@ const mediaHandler = require('./mediaResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+// Parsing the data received from a post request
 const parseBody = (request, response, handler) => {
   const body = [];
 
@@ -30,15 +31,21 @@ const parseBody = (request, response, handler) => {
   });
 };
 
+// Handling all post requests to add a character
 const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/addCharacter') {
     parseBody(request, response, jsonHandler.addCharacter);
   }
 };
 
+// Handling all possible get requests. Including static files
 const handleGet = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/style.css') {
     htmlHandler.getCSS(request, response);
+  } else if (parsedUrl.pathname === '/normalize.css') {
+    htmlHandler.getNormalizedCSS(request, response);
+  } else if (parsedUrl.pathname === '/skeleton.css') {
+    htmlHandler.getSkeletonCSS(request, response);
   } else if (parsedUrl.pathname === '/getCharacters') {
     jsonHandler.getCharacters(request, response);
   } else if (parsedUrl.pathname === '/') {
@@ -56,6 +63,7 @@ const handleGet = (request, response, parsedUrl) => {
   }
 };
 
+// Handling head requests
 const handleHead = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/getCharacters') {
     jsonHandler.getCharactersMeta(request, response);
@@ -64,6 +72,7 @@ const handleHead = (request, response, parsedUrl) => {
   }
 };
 
+// Calling the handler functions for each type of request
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
 

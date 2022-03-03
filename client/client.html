@@ -3,11 +3,13 @@
 <head>
   <title>Project 1</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <link rel="stylesheet" type="text/css" href="/normalize.css">
+  <link rel="stylesheet" type="text/css" href="/skeleton.css">
   
   <script>
-  let createdCharacters = [];
 
-  const handleResponse = async (response, parseResponse) => {
+  //function to handle reponses and display to the user
+  const handleResponse = async (response, nameField, parseResponse) => {
       
     const content = document.querySelector('#content');
 
@@ -17,9 +19,11 @@
         break;
       case 201: 
         console.log(response.status + " - Created");
+        content.innerHTML = '';
         break;
       case 204:
         console.log(response.status + " - Updated");
+        content.innerHTML = '';
         return;
       case 400:
         console.log(response.status + " - Bad Request");
@@ -29,47 +33,66 @@
         break;
     }
 
-     if (parseResponse === 'get') {
-      let obj = await response.json();  
-      console.log(obj);
-      //content.innerHTML = `<p>${obj.name}</p>`;
-     }
+    let obj = await response.json();
+
+    console.log(Object.keys(obj)[0]);
+
+    if (obj.errorMessage) {
+      content.innerHTML = `<p>${obj.errorMessage}</p>`;
+    } 
   };
 
+  //Doing all the checks required when completing a post request, as well as completing the post request
   const sendPost = async (nameForm) => {
+
+    let text;
+    const getCharacterForm = document.querySelector('#getCharacterForm');
 
     const nameAction = nameForm.getAttribute('action');
     const nameMethod = nameForm.getAttribute('method');
       
     const nameField = nameForm.querySelector('#nameField').value;
     const typeField = nameForm.querySelector('#typeField').value;
+    const strengthField = nameForm.querySelector('#strengthStat').value;
+    const dexterityField = nameForm.querySelector('#dexterityStat').value;
+    const enduranceField = nameForm.querySelector('#enduranceStat').value;
+    const intelligenceField = nameForm.querySelector('#intelligenceStat').value;
+    const vigorField = nameForm.querySelector('#vigorStat').value;
 
-    const characterSelect = document.querySelector('#characterSelect');
-    const option = document.createElement("option");
+    const statTotal = parseInt(strengthField) + parseInt(dexterityField) + 
+    parseInt(enduranceField) + parseInt(intelligenceField) + parseInt(vigorField);
 
-    option.text = nameField; 
-    option.value = nameField;
-    characterSelect.add(option);
-    
-    // console.log(createdCharacters);
+    const formData = `name=${nameField}&characterType=${typeField}
+    &strength=${strengthField}&dexterity=${dexterityField}&endurance=${enduranceField}
+    &intelligence=${intelligenceField}&vigor=${vigorField}`;
 
-    // if (createdCharacters.length === 0) {
-    //   option.text = nameField; 
-    //   option.value = nameField;
-    //   characterSelect.add(option);
-    // } else {
-    //   for (let i = 0; i < createdCharacters.length; i++) {
-    //     if (createdCharacters[i] !== nameField) {
-    //       option.text = nameField; 
-    //       option.value = nameField;
-    //       characterSelect.add(option);
-    //     } 
-    //   }
-    // }
+    if (!strengthField || !dexterityField || !enduranceField 
+        || !intelligenceField || !vigorField || statTotal != 25) {
+       
+      let response = await fetch(nameAction, {
+      method: nameMethod,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: formData,
+      });
+      return handleResponse(response, nameField, nameMethod === 'get')
+    }
 
-    // createdCharacters.push(nameField);
+    const img = document.querySelector("#characterPic");
+    if (img != null) {
+        img.remove();
+    }
 
-    const formData = `name=${nameField}&characterType=${typeField}`;
+    const characterDiv = document.querySelector('#characterList');
+    text = document.createElement('p');
+    text.innerHTML += nameField;
+    text.style = "cursor: pointer;";
+    text.onclick = () => {
+      sendGet(getCharacterForm, text.innerHTML);
+    }
+    characterDiv.appendChild(text);
 
     let response = await fetch(nameAction, {
       method: nameMethod,
@@ -80,12 +103,13 @@
       body: formData,
     });
 
-    handleResponse(response, nameMethod === 'post');
+    return handleResponse(response, text.innerHTML, nameMethod === 'post');
   };
 
-  const sendGet = async (characterForm) => {
+  //Sending a get request from the passed in form
+  const sendGet = async (characterForm, nameField) => {
     const url = characterForm.getAttribute('action');
-    const method = 'get';
+    const method = characterForm.getAttribute('method');
 
     let response = await fetch(url, {
       method: method,
@@ -95,9 +119,10 @@
       },
     });
 
-    handleResponse(response, method === 'get');
+    handleResponse(response, nameField, method === 'get');
   };
   
+  //Init function to setup listeners and on change events
   const init = () => {
     const setCharacterForm = document.querySelector('#setCharacterForm');
     const getCharacterForm = document.querySelector('#getCharacterForm');
@@ -106,23 +131,10 @@
     const addCharacter = (e) => {
       e.preventDefault();
       sendPost(setCharacterForm);
-
-      const img = document.querySelector("#characterPic");
-      if (img != null) {
-        img.remove();
-      }
-
-      return false;
-    }
-
-    const getCharacters = (e) => {
-      e.preventDefault();
-      sendGet(getCharacterForm);
       return false;
     }
       
     setCharacterForm.addEventListener('submit', addCharacter);
-    getCharacterForm.addEventListener('submit', getCharacters);
 
     select.addEventListener('change', () => {
       const content = document.querySelector('#content');
@@ -130,6 +142,39 @@
       if (document.querySelector('#characterPic') !== null) {
         content.removeChild(document.querySelector('#characterPic'));
       }
+
+      if (setCharacterForm.querySelector('#typeField').value === 'knight') {
+        setCharacterForm.querySelector('#strengthStat').value = 7;
+        setCharacterForm.querySelector('#dexterityStat').value = 4;
+        setCharacterForm.querySelector('#enduranceStat').value = 5;
+        setCharacterForm.querySelector('#intelligenceStat').value = 2;
+        setCharacterForm.querySelector('#vigorStat').value = 7;
+      }
+
+      if (setCharacterForm.querySelector('#typeField').value === 'warrior') {
+        setCharacterForm.querySelector('#strengthStat').value = 5;
+        setCharacterForm.querySelector('#dexterityStat').value = 5;
+        setCharacterForm.querySelector('#enduranceStat').value = 5;
+        setCharacterForm.querySelector('#intelligenceStat').value = 5;
+        setCharacterForm.querySelector('#vigorStat').value = 5;
+      }
+
+      if (setCharacterForm.querySelector('#typeField').value === 'sorcerer') {
+        setCharacterForm.querySelector('#strengthStat').value = 3;
+        setCharacterForm.querySelector('#dexterityStat').value = 4;
+        setCharacterForm.querySelector('#enduranceStat').value = 6;
+        setCharacterForm.querySelector('#intelligenceStat').value = 8;
+        setCharacterForm.querySelector('#vigorStat').value = 4;
+      }
+
+      if (setCharacterForm.querySelector('#typeField').value === 'thief') {
+        setCharacterForm.querySelector('#strengthStat').value = 3;
+        setCharacterForm.querySelector('#dexterityStat').value = 7;
+        setCharacterForm.querySelector('#enduranceStat').value = 8;
+        setCharacterForm.querySelector('#intelligenceStat').value = 3;
+        setCharacterForm.querySelector('#vigorStat').value = 4;
+      }
+
 
       const src = '/' + select.value + '.jpg';
       const img = document.createElement('img');
@@ -147,6 +192,7 @@
 <body>
   <section id="top">
     <form id="setCharacterForm" action="/addCharacter" method="post">
+      <h1>Character Creator</h1>
       <label for="name">Name: </label>
       <input id="nameField" type="text" name="name" />
       <label for="characterType">Character Type: </label>
@@ -157,15 +203,30 @@
         <option value="thief">Thief</option>
         <option value="sorcerer">Sorcerer</option>
       </select>
+      <label for="strength">Strength: </label>
+      <input type="number" id="strengthStat" name="strength" min="1" max="10">
+
+      <label for="dexterity">Dexterity: </label>
+      <input type="number" id="dexterityStat" name="dexterity" min="1" max="10">
+
+      <label for="endurance">Endurance: </label>
+      <input type="number" id="enduranceStat" name="endurance" min="1" max="10">
+
+      <label for="intelligence">Intelligence: </label>
+      <input type="number" id="intelligenceStat" name="intelligence" min="1" max="10">
+
+      <label for="vigor">Vigor: </label>
+      <input type="number" id="vigorStat" name="vigor" min="1" max="10">
+
       <input type="submit" value="Create Character" />
     </form>
+
     <form id="getCharacterForm" action="/getCharacters" method="get">
-      <label for="characterNames">Created Characters: </label>
-      <select id="characterSelect">
-        
-      </select>
-      <input type="submit" value="Get Selected Character" />
+      
     </form>
+
+    <label for="characterNames">Created Characters: </label>
+      <div id="characterList"></div>
   </section>
   <section id="content">
   </section>
