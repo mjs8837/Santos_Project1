@@ -35,7 +35,7 @@
 
     let obj = await response.json();
 
-    console.log(Object.keys(obj)[0]);
+    content.innerHTML = JSON.stringify(obj);
 
     if (obj.errorMessage) {
       content.innerHTML = `<p>${obj.errorMessage}</p>`;
